@@ -8,7 +8,7 @@ def calculateSeparation(currentBoidIndex, boids, NEIGHBOR_DISTANCE):
 
 	for index in range(len(boids)):
 		if(index != currentBoidIndex):
-			if(dist(currentBoidPos , boids[index].getPosition()) < NEIGHBOR_DISTANCE):
+			if(dist(currentBoidPos, boids[index].getPosition()) < NEIGHBOR_DISTANCE):
 				neighbors.append(boids[index].getPosition())
 
 	for neighborPos in neighbors:

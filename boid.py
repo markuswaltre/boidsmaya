@@ -8,7 +8,7 @@ class Boid(object):
 
 	def __init__(self, order):
 		self._name = "cube%s" % order
-		self._obj = cmds.polyCube(constructionHistory=True, width=1, height=1, depth=1, n=self._name)
+		self._obj = cmds.polyCube(constructionHistory=True, width=5, height=5, depth=5, n=self._name)
 
 	def getPosition(self):
 		return self._position

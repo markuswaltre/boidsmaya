@@ -35,6 +35,3 @@ def setlength(u, l):
 
 def norm(u):
 	return setlength(u, 1)
-
-
-
