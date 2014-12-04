@@ -1,15 +1,16 @@
 from boid import *
 from vec import *
 
-def cohesionRule(currentBoid, allBoids):
+def cohesionRule(currentBoidIndex, boids, NEIGHBOUR_DISTANCE):
 	perceivedFlockCenter = [0, 0, 0]
-	for b in range(objects):              												#for all the boids
-        	if b != allBoids:                          									#except the boid at hand
-            	perceivedFlockCenter = vec.add(perceivedFlockCenter, boids_array[b].getPosition())  	#calculate the total pfc
+	for index in range(len(boids)):              												   #for all the boids
+        	if index != currentBoidIndex:  
+                if(dist(currentBoidIndex, boids[index].getPosition()) < NEIGHBOUR_DISTANCE)                        									   #except the boid at hand
+            	   perceivedFlockCenter = vec.add(perceivedFlockCenter, boids[index].getPosition())    #calculate the total pfc
 
-	perceivedFlockCenter = perceivedFlockCenter/(range(objects)							#Calculate avg pfc
+	perceivedFlockCenter = perceivedFlockCenter/range(len(boids))						#Calculate avg pfc
 
-    vel = vec.sub(perceivedFlockCenter, currentBoid)*0.95;
+    vel = boids[currentBoidIndex] + vec.sub(perceivedFlockCenter, boids[currentBoidIndex])*0.95;
 
 	#nudge the boid in the correct direction toward the pfc 
     # if perceivedFlockCenter[0] > currentBoid.getPosition()[0]:
