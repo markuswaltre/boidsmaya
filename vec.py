@@ -19,7 +19,7 @@ def scale(u, v):
 	return [a * b for a, b in zip(u, v)]
 
 def div_by_scalar(u, scalar):
-	return [u[0]/scalar, u[1]/scalar, u[2]/scalar]
+	return [u[0]/float(scalar), u[1]/float(scalar), u[2]/float(scalar)]
 
 def scale_by_scalar(u, scalar):
 	return [a * scalar for a in u]

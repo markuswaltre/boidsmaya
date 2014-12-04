@@ -1,7 +1,7 @@
 from vec import *
 from boid import *
 
-def separation(currentBoidIndex, boids, NEIGHBOR_DISTANCE):
+def calculateSeparation(currentBoidIndex, boids, NEIGHBOR_DISTANCE):
 	neighbors = []
 	currentBoidPos = boids[currentBoidIndex].getPosition()
 	separationVector = [0,0,0]
