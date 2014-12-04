@@ -1,14 +1,21 @@
 from boid import *
 from vec import *
 
-def cohesionRule(currentBoidIndex, boids, NEIGHBOUR_DISTANCE):
+def calculateCohesion(currentBoidIndex, boids, NEIGHBOUR_DISTANCE):
 	perceivedFlockCenter = [0, 0, 0]
-	for index in range(len(boids)):              												   #for all the boids
-        	if index != currentBoidIndex:  
-                if(dist(currentBoidIndex, boids[index].getPosition()) < NEIGHBOUR_DISTANCE)                        									   #except the boid at hand
-            	   perceivedFlockCenter = vec.add(perceivedFlockCenter, boids[index].getPosition())    #calculate the total pfc
+    numberOfNeighbours = 0
 
-	perceivedFlockCenter = perceivedFlockCenter/range(len(boids))						#Calculate avg pfc
+	for index in range(len(boids)):  
+        #skip the current boid            												       
+    	if index != currentBoidIndex:  
+            #and the boids not in range
+            if(dist(currentBoidIndex, boids[index].getPosition()) < NEIGHBOUR_DISTANCE)               
+               #then calculate the total pfc
+        	   perceivedFlockCenter = vec.add(perceivedFlockCenter, boids[index].getPosition())       
+               numberOfNeighbours += 1
+    
+    #Calculate avg pfc
+	perceivedFlockCenter = vec.divide_by_scalar(perceivedFlockCenter,numberOfNeighbours)						      
 
     vel = boids[currentBoidIndex] + vec.sub(perceivedFlockCenter, boids[currentBoidIndex])*0.95;
 
