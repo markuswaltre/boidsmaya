@@ -12,7 +12,7 @@ cubeposX = []
 cubeposY = []
 cubeposZ = []
 
-def createObjects:
+def createObjects():
     for x in range(objects):
         tmp = mc.polyCube(constructionHistory=True, width=1, height=1, depth=1)
         cubes.append(tmp)
@@ -25,7 +25,7 @@ def createObjects:
 
     return True
     
-def simulate:
+def simulate():
     for x in range(timedelta/timestep):
         x = x * timestep
         for cube in range(objects):
@@ -37,11 +37,7 @@ def simulate:
 
     return True
         
-def main:
+def main():
     createObjects()
-    set = cmds.sets()
-    print cmds.select('set')
-
-main()
-
-# mc.play()
+    set = mc.sets()
+    print mc.select('set1')
