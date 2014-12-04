@@ -32,11 +32,20 @@ def createBoids(size):
 
 def firstKeyframe(boids_array):
 	for boid in boids_array:
-		xRand = random.random()*20 - 10
-		yRand = random.random()*20 - 10
-		zRand = random.random()*20 - 10
-		boid.setPosition([xRand, yRand, zRand])
-		cmds.setKeyframe(boid.getObj(), time=0, v=xRand, at='translateX')
+		xPos = random.random()*20 - 10
+		yPos = random.random()*20 - 10
+		zPos = random.random()*20 - 10
+
+		xVel = random.random() - 1
+		yVel = random.random() - 1
+		zVel = random.random() - 1
+
+		boid.setPosition([xPos, yPos, zPos])
+		boid.setVelocity([xVel, yVel, zVel])
+
+		cmds.setKeyframe(boid.getObj(), time=0, v=xPos, at='translateX')
+		cmds.setKeyframe(boid.getObj(), time=0, v=yPos, at='translateY')
+		cmds.setKeyframe(boid.getObj(), time=0, v=zPos, at='translateZ')
 
 
 def createObjects():
@@ -72,6 +81,8 @@ def main():
 	boids_array = createBoids(OBJECTS)
 	## randomize positions
 	firstKeyframe(boids_array)
+
+	print boids_array[2].getVelocity()
 	## create keyframes
 	#simulateBoids(boids_array)
 

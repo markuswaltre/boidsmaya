@@ -17,7 +17,7 @@ class Boid(object):
 		self._position = position
 
 	def getVelocity(self):
-		return _velocity
+		return self._velocity
 
 	def setVelocity(self, velocity):
 		self._velocity = velocity
