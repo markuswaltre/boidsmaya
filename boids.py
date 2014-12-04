@@ -2,24 +2,46 @@ import maya.cmds as cmds
 import random
 
 distance = 10
-timedelta = 3000
+timedelta = 2000
 startval = 0
-objects = 70
-timestep = 60
+objects = 20
+timestep = 6
 
 cubes = []
 cubeposX = []
 cubeposY = []
 cubeposZ = []
 
-def boid(): 
+class Boid(object):
+	_name = "" 
 	_position = 0
 	_velocity = 0
-	
+
+	def __init__(self, order):
+		self._name = "cube%s" % order
+		cmds.polyCube(constructionHistory=True, width=1, height=1, depth=1, n=self._name)
+
+	def getPosition(self):
+		return self._position
+
+	def setPosition(self, position):
+		self._position = position
+
+	def getVelocity(self):
+		return _velocity
+
+	def setVelocity(self, velocity):
+		self._velocity = velocity
+
+	def getName(self):
+		return self._name
+
+def make_boid(order):
+	return Boid(order)
 
 def createObjects():
 	for x in range(objects):
-		name = 'cube%s' % x
+		name = "cube%s" % x
 		tmp = cmds.polyCube(constructionHistory=True, width=1, height=1, depth=1, n=name)
 		cubes.append(tmp)
 		zCord = random.random()*10
@@ -37,7 +59,6 @@ def deleteAllObjects():
 
 	return True
 
-
 def simulate():
 	for x in range(timedelta/timestep):
 		x = x * timestep
@@ -52,6 +73,12 @@ def simulate():
 		
 def main():
 	deleteAllObjects()
-	createObjects()
-	simulate()
+	# createObjects()
+	# simulate()
+	x = make_boid(0)
+	print x.getPosition()
 	cmds.play()
+
+
+
+
