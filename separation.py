@@ -1,25 +1,20 @@
-#Author Tobias Palmér
-#Date: 2014-12-04
-
-#Returns the calculated separation vector for the current boid
-
 from vec import *
 from boid import *
 
-def calculateSeparation(currentBoidIndex, allBoids):
-	neghborBoids = []
-	currentBoidPos = allBoids[currentBoidIndex].getPosition()
+def separation(currentBoidIndex, boids, NEIGHBOR_DISTANCE):
+	neighbors = []
+	currentBoidPos = boids[currentBoidIndex].getPosition()
 	separationVector = [0,0,0]
 
-	for index in allBoids.len()
-		if(index != currentBoidIndex)
-			if(dist(currentBoidPos , allBoids[index].getPosition()) < neighborDistance)
-				neghborBoids.append(allBoids[index].getPosition())
+	for index in range(len(boids)):
+		if(index != currentBoidIndex):
+			if(dist(currentBoidPos , boids[index].getPosition()) < NEIGHBOR_DISTANCE):
+				neighbors.append(boids[index].getPosition())
 
-	for neighborPos in neghborBoids
+	for neighborPos in neighbors:
 		temp = sub(currentBoidPos, neighborPos)
-		temp = scale_by_scalar(temp,-1)
-		separationVector = add(separationVector,temp)
+		temp = scale_by_scalar(temp, -1)
+		separationVector = add(separationVector, temp)
 
 	return separationVector
 		

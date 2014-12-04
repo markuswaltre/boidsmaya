@@ -2,9 +2,11 @@ import maya.cmds as cmds
 import random
 from boid import *
 from vec import *
+from separation import *
 
 ## variables
 OBJECTS = 20
+NEIGHBOR_DISTANCE = 2
 
 timedelta = 2000
 startval = 0
@@ -47,6 +49,9 @@ def firstKeyframe(boids_array):
 		cmds.setKeyframe(boid.getObj(), time=0, v=yPos, at='translateY')
 		cmds.setKeyframe(boid.getObj(), time=0, v=zPos, at='translateZ')
 
+def simulateKeyframes(boids_array):
+
+	return True
 
 def createObjects():
 	for x in range(objects):
@@ -82,7 +87,10 @@ def main():
 	## randomize positions
 	firstKeyframe(boids_array)
 
-	print boids_array[2].getVelocity()
+	## simulate keyframes
+
+	print separation(0, boids_array, NEIGHBOR_DISTANCE)
+
 	## create keyframes
 	#simulateBoids(boids_array)
 
