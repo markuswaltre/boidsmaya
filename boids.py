@@ -30,7 +30,14 @@ def createObjects():
 		cmds.setKeyframe(tmp, time=1, v=xCord, at='translateX')
 
 	return True
-	
+
+def deleteAllObjects():
+	cmds.select( all=True )
+	cmds.delete()
+
+	return True
+
+
 def simulate():
 	for x in range(timedelta/timestep):
 		x = x * timestep
@@ -44,6 +51,7 @@ def simulate():
 	return True
 		
 def main():
+	deleteAllObjects()
 	createObjects()
 	simulate()
 	cmds.play()
