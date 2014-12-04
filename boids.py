@@ -7,36 +7,26 @@ from separation import *
 ## variables
 OBJECTS = 20
 NEIGHBOR_DISTANCE = 2
-
-timedelta = 2000
-startval = 0
-timestep = 6
-
-cubes = []
-cubeposX = []
-cubeposY = []
-cubeposZ = []
-
+KEYFRAMES = 2000
+TIMESTEP = 10
 
 def deleteAllObjects():
 	cmds.select( all=True )
 	cmds.delete()
 
-	return True
-
-def createBoids(size):
+def createBoids():
 	arr = []
 
-	for index in range(size):
+	for index in range(OBJECTS):
 		arr.append(make_boid(index))
 
 	return arr
 
 def firstKeyframe(boids_array):
 	for boid in boids_array:
-		xPos = random.random()*20 - 10
-		yPos = random.random()*20 - 10
-		zPos = random.random()*20 - 10
+		xPos = random.random() * 20 - 10
+		yPos = random.random() * 20 - 10
+		zPos = random.random() * 20 - 10
 
 		xVel = random.random() - 1
 		yVel = random.random() - 1
@@ -51,57 +41,23 @@ def firstKeyframe(boids_array):
 
 def simulateKeyframes(boids_array):
 
-	return True
-
-def createObjects():
-	for x in range(objects):
-		name = "cube%s" % x
-		tmp = cmds.polyCube(constructionHistory=True, width=1, height=1, depth=1, n=name)
-		cubes.append(tmp)
-		zCord = random.random()*10
-		xCord = random.random()*10
-		cubeposX.append(xCord)
-		cubeposZ.append(zCord)
-		cmds.setKeyframe(tmp, time=1, v=zCord, at='translateZ')
-		cmds.setKeyframe(tmp, time=1, v=xCord, at='translateX')
-
-	return True
-
-def simulate():
-	for x in range(timedelta/timestep):
-		x = x * timestep
-		for cube in range(objects):
-			cubeposX[cube] += random.random()*2 - 1
-			cubeposZ[cube] += random.random()*2 - 1
-
-			cmds.setKeyframe(cubes[cube], time=x, v=cubeposZ[cube], at='translateZ')
-			cmds.setKeyframe(cubes[cube], time=x, v=cubeposX[cube], at='translateX')
-
-	return True
+	for keyframe in range(KEYFRAMES/TIMESTEP):
+		for boidIndex in range(len(boids_array)):
+			sep = calculateSeparation(boidIndex, boids_array, NEIGHBOR_DISTANCE)
 		
 def main():
 	## delete scene
 	deleteAllObjects()
+
 	## create boids
-	boids_array = createBoids(OBJECTS)
+	boids_array = createBoids()
+
 	## randomize positions
 	firstKeyframe(boids_array)
 
 	## simulate keyframes
+	simulateKeyframes(boids_array)
 
-	print separation(0, boids_array, NEIGHBOR_DISTANCE)
-
-	## create keyframes
-	#simulateBoids(boids_array)
-
-	# createObjects()
-	# simulate()
-	# x = make_boid(0)
-	# y = make_boid(1)
-	# y.setPosition([1, 1, 1])
-	# print x.getPosition()
-	# print y.getPosition()
-
-	# print dist(x.getPosition(), y.getPosition())
+	## play environment
 	cmds.play()
 
