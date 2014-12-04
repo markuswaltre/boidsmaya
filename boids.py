@@ -3,10 +3,11 @@ import random
 from boid import *
 from vec import *
 
-distance = 10
+## variables
+OBJECTS = 20
+
 timedelta = 2000
 startval = 0
-objects = 20
 timestep = 6
 
 cubes = []
@@ -21,8 +22,22 @@ def deleteAllObjects():
 
 	return True
 
-def createBoids():
-	return True
+def createBoids(size):
+	arr = []
+
+	for index in range(size):
+		arr.append(make_boid(index))
+
+	return arr
+
+def firstKeyframe(boids_array):
+	for boid in boids_array:
+		xRand = random.random()*20 - 10
+		yRand = random.random()*20 - 10
+		zRand = random.random()*20 - 10
+		boid.setPosition([xRand, yRand, zRand])
+		cmds.setKeyframe(boid.getObj(), time=0, v=xRand, at='translateX')
+
 
 def createObjects():
 	for x in range(objects):
@@ -51,16 +66,23 @@ def simulate():
 	return True
 		
 def main():
+	## delete scene
 	deleteAllObjects()
-	boids_array = createBoids()
+	## create boids
+	boids_array = createBoids(OBJECTS)
+	## randomize positions
+	firstKeyframe(boids_array)
+	## create keyframes
+	#simulateBoids(boids_array)
+
 	# createObjects()
 	# simulate()
-	x = make_boid(0)
-	y = make_boid(1)
-	y.setPosition([1, 1, 1])
-	print x.getPosition()
-	print y.getPosition()
+	# x = make_boid(0)
+	# y = make_boid(1)
+	# y.setPosition([1, 1, 1])
+	# print x.getPosition()
+	# print y.getPosition()
 
-	print dist(x.getPosition(), y.getPosition())
+	# print dist(x.getPosition(), y.getPosition())
 	cmds.play()
 

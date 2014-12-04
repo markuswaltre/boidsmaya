@@ -4,10 +4,11 @@ class Boid(object):
 	_name = "" 
 	_position = [0, 0, 0]
 	_velocity = [0, 0, 0]
+	_obj = ""
 
 	def __init__(self, order):
 		self._name = "cube%s" % order
-		cmds.polyCube(constructionHistory=True, width=1, height=1, depth=1, n=self._name)
+		self._obj = cmds.polyCube(constructionHistory=True, width=1, height=1, depth=1, n=self._name)
 
 	def getPosition(self):
 		return self._position
@@ -23,6 +24,9 @@ class Boid(object):
 
 	def getName(self):
 		return self._name
+
+	def getObj(self):
+		return self._obj
 
 def make_boid(order):
 	return Boid(order)
