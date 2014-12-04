@@ -1,10 +1,13 @@
 import maya.cmds as cmds
 import random
+from boid import *
+from vec import *
 
-distance = 10
+## variables
+OBJECTS = 20
+
 timedelta = 2000
 startval = 0
-objects = 20
 timestep = 6
 
 cubes = []
@@ -12,32 +15,29 @@ cubeposX = []
 cubeposY = []
 cubeposZ = []
 
-class Boid(object):
-	_name = "" 
-	_position = 0
-	_velocity = 0
 
-	def __init__(self, order):
-		self._name = "cube%s" % order
-		cmds.polyCube(constructionHistory=True, width=1, height=1, depth=1, n=self._name)
+def deleteAllObjects():
+	cmds.select( all=True )
+	cmds.delete()
 
-	def getPosition(self):
-		return self._position
+	return True
 
-	def setPosition(self, position):
-		self._position = position
+def createBoids(size):
+	arr = []
 
-	def getVelocity(self):
-		return _velocity
+	for index in range(size):
+		arr.append(make_boid(index))
 
-	def setVelocity(self, velocity):
-		self._velocity = velocity
+	return arr
 
-	def getName(self):
-		return self._name
+def firstKeyframe(boids_array):
+	for boid in boids_array:
+		xRand = random.random()*20 - 10
+		yRand = random.random()*20 - 10
+		zRand = random.random()*20 - 10
+		boid.setPosition([xRand, yRand, zRand])
+		cmds.setKeyframe(boid.getObj(), time=0, v=xRand, at='translateX')
 
-def make_boid(order):
-	return Boid(order)
 
 def createObjects():
 	for x in range(objects):
@@ -50,12 +50,6 @@ def createObjects():
 		cubeposZ.append(zCord)
 		cmds.setKeyframe(tmp, time=1, v=zCord, at='translateZ')
 		cmds.setKeyframe(tmp, time=1, v=xCord, at='translateX')
-
-	return True
-
-def deleteAllObjects():
-	cmds.select( all=True )
-	cmds.delete()
 
 	return True
 
@@ -72,10 +66,23 @@ def simulate():
 	return True
 		
 def main():
+	## delete scene
 	deleteAllObjects()
+	## create boids
+	boids_array = createBoids(OBJECTS)
+	## randomize positions
+	firstKeyframe(boids_array)
+	## create keyframes
+	#simulateBoids(boids_array)
+
 	# createObjects()
 	# simulate()
-	x = make_boid(0)
-	print x.getPosition()
+	# x = make_boid(0)
+	# y = make_boid(1)
+	# y.setPosition([1, 1, 1])
+	# print x.getPosition()
+	# print y.getPosition()
+
+	# print dist(x.getPosition(), y.getPosition())
 	cmds.play()
 
