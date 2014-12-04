@@ -15,5 +15,8 @@ def calculateAlignment(currentBoidIndex, boids, NEIGHBOR_DISTANCE):
 
 	for neighbor in neighbors:
 		temp = add(temp,neighbor.getVelocity())
-		temp = scale_by_scalar(temp, 1/numberOfNeighbors)
+		temp = div_by_scalar(temp, numberOfNeighbors)
+		alignmentVector = add(alignmentVector, temp)
+
+	return alignmentVector
 
