@@ -1,5 +1,6 @@
 import maya.cmds as cmds
 import random
+from boid import *
 from vec import *
 
 distance = 10
@@ -13,32 +14,15 @@ cubeposX = []
 cubeposY = []
 cubeposZ = []
 
-class Boid(object):
-	_name = "" 
-	_position = [0, 0, 0]
-	_velocity = [0, 0, 0]
 
-	def __init__(self, order):
-		self._name = "cube%s" % order
-		cmds.polyCube(constructionHistory=True, width=1, height=1, depth=1, n=self._name)
+def deleteAllObjects():
+	cmds.select( all=True )
+	cmds.delete()
 
-	def getPosition(self):
-		return self._position
+	return True
 
-	def setPosition(self, position):
-		self._position = position
-
-	def getVelocity(self):
-		return _velocity
-
-	def setVelocity(self, velocity):
-		self._velocity = velocity
-
-	def getName(self):
-		return self._name
-
-def make_boid(order):
-	return Boid(order)
+def createBoids():
+	return True
 
 def createObjects():
 	for x in range(objects):
@@ -51,12 +35,6 @@ def createObjects():
 		cubeposZ.append(zCord)
 		cmds.setKeyframe(tmp, time=1, v=zCord, at='translateZ')
 		cmds.setKeyframe(tmp, time=1, v=xCord, at='translateX')
-
-	return True
-
-def deleteAllObjects():
-	cmds.select( all=True )
-	cmds.delete()
 
 	return True
 
@@ -74,6 +52,7 @@ def simulate():
 		
 def main():
 	deleteAllObjects()
+	boids_array = createBoids()
 	# createObjects()
 	# simulate()
 	x = make_boid(0)
