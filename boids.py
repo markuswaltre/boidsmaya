@@ -1,5 +1,6 @@
 import maya.cmds as cmds
 import random
+from vec import *
 
 distance = 10
 timedelta = 2000
@@ -14,8 +15,8 @@ cubeposZ = []
 
 class Boid(object):
 	_name = "" 
-	_position = 0
-	_velocity = 0
+	_position = [0, 0, 0]
+	_velocity = [0, 0, 0]
 
 	def __init__(self, order):
 		self._name = "cube%s" % order
@@ -76,6 +77,11 @@ def main():
 	# createObjects()
 	# simulate()
 	x = make_boid(0)
+	y = make_boid(1)
+	y.setPosition([1, 1, 1])
 	print x.getPosition()
+	print y.getPosition()
+
+	print dist(x.getPosition(), y.getPosition())
 	cmds.play()
 
