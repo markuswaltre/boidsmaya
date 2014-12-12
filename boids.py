@@ -10,7 +10,7 @@ from alignment import *
 OBJECTS = 20
 NEIGHBOR_DISTANCE = 40
 KEYFRAMES = 2000
-TIMESTEP = 50
+TIMESTEP = 20
 
 def deleteAllObjects():
 	cmds.select( all=True )
@@ -30,9 +30,9 @@ def firstKeyframe(boids_array):
 		yPos = random.random() * 20 - 10
 		zPos = random.random() * 20 - 10
 
-		xVel = random.random() - 1
-		yVel = random.random() - 1
-		zVel = random.random() - 1
+		xVel = 0 #random.random() - 1
+		yVel = 0 #random.random() - 1
+		zVel = 0 #random.random() - 1
 		# xVel = 0
 		# yVel = 0
 		# zVel = 0
@@ -52,19 +52,28 @@ def simulateKeyframes(boids_array):
 
 			## get vectors
 			separation 	= calculateSeparation(boidIndex, boids_array, NEIGHBOR_DISTANCE)
-			# cohesion 	= calculateCohesion(boidIndex, boids_array, NEIGHBOR_DISTANCE)
-			# alignment 	= calculateAlignment(boidIndex, boids_array, NEIGHBOR_DISTANCE)
-
+			cohesion 	= calculateCohesion(boidIndex, boids_array, NEIGHBOR_DISTANCE)
+			alignment 	= calculateAlignment(boidIndex, boids_array, NEIGHBOR_DISTANCE)
+		
+			separation = scale_by_scalar(separation, 0.06)
+			alignment = scale_by_scalar(alignment, -0.02)
+			newVelocity = [0,0,0]
 			## new velocity
 			currentVelocity = boid.getVelocity()
-			# newVelocity = add(currentVelocity, add(cohesion, alignment))
-			newVelocity = add(currentVelocity, separation)
+			newVelocity = add(currentVelocity, add(cohesion, add(alignment,separation)))
+			# newVelocity = add(currentVelocity, cohesion)
 			boid.setVelocity(newVelocity)
 
 			## new position
 			currentPostion = boid.getPosition()
-			newPosition = add(currentPostion, newVelocity)
+			newPosition = add(currentPostion, scale_by_scalar(newVelocity, 0.4))
 			boid.setPosition(newPosition)
+
+			if(boidIndex == 0):
+				target = cmds.polyCube(width=0.5, height=0.5, depth=0.5,  n='target')
+				cmds.setAttr('%s.translate'%target[0], newPosition[0], newPosition[1], newPosition[2])
+				cmds.aimConstraint(target[0], boid.getObj()[0], aim=[0,-1,0], u=[0,0,1], wu=[1,0,0], wut='vector', o=[0.00001, 0.0, 0.0])
+				# cmds.delete(target[0])
 
 			## update keyframe
 			cmds.setKeyframe(boid.getObj(), time=keyframe*TIMESTEP, v=newPosition[0], at='translateX')
@@ -86,4 +95,15 @@ def main():
 
 	## play environment
 	cmds.play()
+
+
+	# import boidsmaya.boids as toby
+	# import boidsmaya.separation as sep
+	# import boidsmaya.cohesion as coh
+	# import boidsmaya.boid as bd
+	# reload(toby)
+	# reload(sep)
+	# reload(coh)
+	# reload(bd)
+	# toby.main()
 

@@ -3,8 +3,9 @@ from boid import *
 
 def calculateAlignment(currentBoidIndex, boids, NEIGHBOR_DISTANCE):
 	neighbors = []
-	alignmentVector = [0, 0, 0]
 	currentBoidPos = boids[currentBoidIndex].getPosition()
+	avgVelocity = [0, 0, 0]
+	WHEIGHT = 0.2
 
 	for index in range(len(boids)):
 		if(index != currentBoidIndex):
@@ -13,11 +14,12 @@ def calculateAlignment(currentBoidIndex, boids, NEIGHBOR_DISTANCE):
 
 	numberOfNeighbors = len(neighbors)
 
-	for neighbor in neighbors:
-		temp = [0, 0, 0]
-		temp = add(temp, neighbor.getVelocity())
-		temp = div_by_scalar(temp, numberOfNeighbors)
-		alignmentVector = add(alignmentVector, temp)
+	if(numberOfNeighbors > 0):
+		for neighbor in neighbors:
+			avgVelocity = add(avgVelocity, neighbor.getVelocity())
 
-	return alignmentVector
+		# avgVelocity = div_by_scalar(avgVelocity, numberOfNeighbors)
+		avgVelocity = scale_by_scalar(avgVelocity, WHEIGHT)
+
+	return avgVelocity
 
