@@ -5,6 +5,7 @@ from vec import *
 from separation import *
 from cohesion import *
 from alignment import *
+from GUI import *
 
 ## variables
 OBJECTS = 20
@@ -16,10 +17,10 @@ def deleteAllObjects():
 	cmds.select( all=True )
 	cmds.delete()
 
-def createBoids():
+def createBoids(number):
 	arr = []
 
-	for index in range(OBJECTS):
+	for index in range(number):
 		arr.append(make_boid(index))
 
 	return arr
@@ -58,9 +59,11 @@ def simulateKeyframes(boids_array):
 			separation = scale_by_scalar(separation, 0.06)
 			alignment = scale_by_scalar(alignment, -0.02)
 			newVelocity = [0,0,0]
+
 			## new velocity
 			currentVelocity = boid.getVelocity()
 			newVelocity = add(currentVelocity, add(cohesion, add(alignment,separation)))
+			
 			# newVelocity = add(currentVelocity, cohesion)
 			boid.setVelocity(newVelocity)
 
@@ -79,13 +82,16 @@ def simulateKeyframes(boids_array):
 			cmds.setKeyframe(boid.getObj(), time=keyframe*TIMESTEP, v=newPosition[0], at='translateX')
 			cmds.setKeyframe(boid.getObj(), time=keyframe*TIMESTEP, v=newPosition[1], at='translateY')
 			cmds.setKeyframe(boid.getObj(), time=keyframe*TIMESTEP, v=newPosition[2], at='translateZ')
-		
-def main():
+	
+
+
+def main(number):
+
 	## delete scene
 	deleteAllObjects()
 
 	## create boids
-	boids_array = createBoids()
+	boids_array = createBoids(number)
 
 	## randomize positions
 	firstKeyframe(boids_array)
@@ -96,14 +102,4 @@ def main():
 	## play environment
 	cmds.play()
 
-
-	# import boidsmaya.boids as toby
-	# import boidsmaya.separation as sep
-	# import boidsmaya.cohesion as coh
-	# import boidsmaya.boid as bd
-	# reload(toby)
-	# reload(sep)
-	# reload(coh)
-	# reload(bd)
-	# toby.main()
-
+createUI( 'BEZTBOIDZ', applyCallback )
