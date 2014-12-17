@@ -4,7 +4,7 @@ from vec import *
 def calculateCohesion(currentBoidIndex, boids, NEIGHBOUR_DISTANCE):
 	perceivedFlockCenter = [0, 0, 0]
 	numberOfNeighbours = 0
-	WHEIGHT = 0.2
+	WHEIGHT = 1
 
 	for index in range(len(boids)):
 		#skip the current boid            												       

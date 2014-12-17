@@ -4,7 +4,7 @@ from boid import *
 def calculateSeparation(currentBoidIndex, boids, NEIGHBOR_DISTANCE):
 	neighbors = []
 	currentBoidPos = boids[currentBoidIndex].getPosition()
-	WHEIGHT = 0.2
+	WHEIGHT = 1#0.06
 	separationVector = [0,0,0]
 
 	for index in range(len(boids)):

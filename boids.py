@@ -8,9 +8,9 @@ from alignment import *
 from GUI import *
 
 ## variables
-OBJECTS = 20
-NEIGHBOR_DISTANCE = 40
-KEYFRAMES = 2000
+#OBJECTS = 20
+#NEIGHBOR_DISTANCE = 40
+#KEYFRAMES = 2000
 TIMESTEP = 20
 
 def deleteAllObjects():
@@ -25,7 +25,7 @@ def createBoids(number):
 
 	return arr
 
-def firstKeyframe(boids_array):
+def firstKeyframe(boids_array, bScale):
 	for boid in boids_array:
 		xPos = random.random() * 20 - 10
 		yPos = random.random() * 20 - 10
@@ -40,36 +40,43 @@ def firstKeyframe(boids_array):
 
 		boid.setPosition([xPos, yPos, zPos])
 		boid.setVelocity([xVel, yVel, zVel])
+		boid.setScale(bScale)
 
 		cmds.setKeyframe(boid.getObj(), time=0, v=xPos, at='translateX')
 		cmds.setKeyframe(boid.getObj(), time=0, v=yPos, at='translateY')
 		cmds.setKeyframe(boid.getObj(), time=0, v=zPos, at='translateZ')
 
-def simulateKeyframes(boids_array):
+def simulateKeyframes(boids_array, cRadius, sRadius, aRadius, nFrames, cWeight, sWeight, aWeight, mSpeed):
 
-	for keyframe in range(KEYFRAMES/TIMESTEP):
+	for keyframe in range(nFrames/TIMESTEP):
 		for boidIndex in range(len(boids_array)):
 			boid = boids_array[boidIndex]
 
 			## get vectors
-			separation 	= calculateSeparation(boidIndex, boids_array, NEIGHBOR_DISTANCE)
-			cohesion 	= calculateCohesion(boidIndex, boids_array, NEIGHBOR_DISTANCE)
-			alignment 	= calculateAlignment(boidIndex, boids_array, NEIGHBOR_DISTANCE)
+			separation 	= calculateSeparation(boidIndex, boids_array, sRadius)
+			cohesion 	= calculateCohesion(boidIndex, boids_array, cRadius)
+			alignment 	= calculateAlignment(boidIndex, boids_array, aRadius)
 		
-			separation = scale_by_scalar(separation, 0.06)
-			alignment = scale_by_scalar(alignment, -0.02)
+			separation = scale_by_scalar(separation, sWeight)
+			alignment = scale_by_scalar(alignment, aWeight)
+			cohesion = scale_by_scalar(cohesion, cWeight)
+
 			newVelocity = [0,0,0]
 
 			## new velocity
 			currentVelocity = boid.getVelocity()
+
 			newVelocity = add(currentVelocity, add(cohesion, add(alignment,separation)))
 			
+			if(length(newVelocity) > mSpeed):	
+				newVelocity = scale_by_scalar(newVelocity, 0.75)
+
 			# newVelocity = add(currentVelocity, cohesion)
 			boid.setVelocity(newVelocity)
 
 			## new position
 			currentPostion = boid.getPosition()
-			newPosition = add(currentPostion, scale_by_scalar(newVelocity, 0.4))
+			newPosition = add(currentPostion, scale_by_scalar(newVelocity, 1))#0.08
 			boid.setPosition(newPosition)
 
 			if(boidIndex == 0):
@@ -85,19 +92,22 @@ def simulateKeyframes(boids_array):
 	
 
 
-def main(number):
+def main(nBoids, bScale, nFrames, mSpeed, cWeight, cRadius, sWeight, sRadius, aWeight, aRadius):
 
 	## delete scene
 	deleteAllObjects()
 
 	## create boids
-	boids_array = createBoids(number)
+	boids_array = createBoids(nBoids)
 
 	## randomize positions
-	firstKeyframe(boids_array)
+	firstKeyframe(boids_array, bScale)
 
 	## simulate keyframes
-	simulateKeyframes(boids_array)
+	simulateKeyframes(boids_array, cRadius, sRadius, aRadius, nFrames, cWeight, sWeight, aWeight, mSpeed)
+
+	cmds.playbackOptions(max=nFrames)
+	cmds.playbackOptions(aet=nFrames)
 
 	## play environment
 	cmds.play()
