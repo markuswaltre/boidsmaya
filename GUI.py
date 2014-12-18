@@ -1,6 +1,7 @@
 import maya.cmds as cmds
 import functools
 from boids import *
+import os
 
 def createUI( pWindowTitle, pApplyCallback ):
     
@@ -13,11 +14,11 @@ def createUI( pWindowTitle, pApplyCallback ):
 
     cmds.columnLayout(adj = True)
 
-    logopath = cmds.internalVar(upd=True)
+    logopath = os.path.dirname(os.path.abspath(__file__))
 
-    print 'cWwight: %s' % ( logopath )
+    print 'logopath: %s' % ( logopath )
 
-    cmds.image("logo", w=500, h=150, image=logopath+"icons/logo2.jpg")
+    cmds.image("logo", w=500, h=150, image=logopath+"icons/logo3.jpg")
 
     cmds.separator( h=20, style='none' )
     cmds.text( label='Boids' )
