@@ -127,9 +127,8 @@ def simulateKeyframes(boids_array, cRadius, sRadius, aRadius, nFrames, cWeight, 
 			keyframeTranslate(boid.getObj(), keyframe*TIMESTEP, newPosition)
 			keyframeTranslate(boid.getTarget(), keyframe*TIMESTEP, targetPosition)
 
-def main(nBoids, bScale, nFrames, mSpeed, cWeight, cRadius, sWeight, sRadius, aWeight, aRadius, cBoxShowTarget, cBoxUseGoals, cBox3, fRun):
+def main(nBoids, bScale, nFrames, mSpeed, cWeight, cRadius, sWeight, sRadius, aWeight, aRadius, cBoxShowTarget, cBoxUseGoals, cBox3):
 
-	print fRun
 	## delete scene
 	deleteAllObjects()
 
