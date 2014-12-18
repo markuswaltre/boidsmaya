@@ -18,7 +18,6 @@ def calculateAlignment(currentBoidIndex, boids, NEIGHBOR_DISTANCE):
 		for neighbor in neighbors:
 			avgVelocity = add(avgVelocity, neighbor.getVelocity())
 
-		# avgVelocity = div_by_scalar(avgVelocity, numberOfNeighbors)
 		avgVelocity = scale_by_scalar(avgVelocity, WHEIGHT)
 
 	return avgVelocity

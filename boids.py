@@ -8,14 +8,36 @@ from alignment import *
 from GUI import *
 
 ## variables
-#OBJECTS = 20
-#NEIGHBOR_DISTANCE = 40
-#KEYFRAMES = 2000
 TIMESTEP = 20
+START_POS = 40
+goal_array = []
+
 
 def deleteAllObjects():
-	cmds.select( all=True )
+	# cmds.select(all=True)
+	# cmds.delete()
+
+	cmds.select('boid*', r=True)
 	cmds.delete()
+
+
+def getGoals():
+	goals = []
+
+	cmds.select('goal*', r=True)
+	selected = cmds.ls(sl=True)
+	for item in range(len(selected)/2): 
+		x = cmds.getAttr("%s.translateX" % selected[item])
+		y = cmds.getAttr("%s.translateY" % selected[item])
+		z = cmds.getAttr("%s.translateZ" % selected[item])
+		pos = [x,y,z]
+		goals.append(pos)
+
+	return goals
+
+
+	
+	
 
 def createBoids(number):
 	arr = []
@@ -25,37 +47,43 @@ def createBoids(number):
 
 	return arr
 
+
 def firstKeyframe(boids_array, bScale):
 	for boid in boids_array:
-		xPos = random.random() * 20 - 10
-		yPos = random.random() * 20 - 10
-		zPos = random.random() * 20 - 10
 
-		xVel = 0 #random.random() - 1
-		yVel = 0 #random.random() - 1
-		zVel = 0 #random.random() - 1
-		# xVel = 0
-		# yVel = 0
-		# zVel = 0
+		pos = []
+		pos.append(random.random() * START_POS - START_POS/2)
+		pos.append(random.random() * START_POS - START_POS/2)
+		pos.append(random.random() * START_POS - START_POS/2)
 
-		boid.setPosition([xPos, yPos, zPos])
-		boid.setVelocity([xVel, yVel, zVel])
+		boid.setPosition(pos)
 		boid.setScale(bScale)
 
-		cmds.setKeyframe(boid.getObj(), time=0, v=xPos, at='translateX')
-		cmds.setKeyframe(boid.getObj(), time=0, v=yPos, at='translateY')
-		cmds.setKeyframe(boid.getObj(), time=0, v=zPos, at='translateZ')
+		keyframeTranslate(boid.getObj(), 0, pos)
+		keyframeTranslate(boid.getTarget(), 0, pos)
+		boid.setAim()
+		boid.hideTarget()
 
-def simulateKeyframes(boids_array, cRadius, sRadius, aRadius, nFrames, cWeight, sWeight, aWeight, mSpeed):
+def keyframeTranslate(obj, t, position):
+	cmds.setKeyframe(obj, time=t, v=position[0], at='translateX')
+	cmds.setKeyframe(obj, time=t, v=position[1], at='translateY')
+	cmds.setKeyframe(obj, time=t, v=position[2], at='translateZ')
 
+def simulateKeyframes(boids_array, cRadius, sRadius, aRadius, nFrames, cWeight, sWeight, aWeight, mSpeed, goals_array):
+	goal_index = 0
 	for keyframe in range(nFrames/TIMESTEP):
 		for boidIndex in range(len(boids_array)):
 			boid = boids_array[boidIndex]
 
 			## get vectors
+
 			separation 	= calculateSeparation(boidIndex, boids_array, sRadius)
 			cohesion 	= calculateCohesion(boidIndex, boids_array, cRadius)
 			alignment 	= calculateAlignment(boidIndex, boids_array, aRadius)
+
+			if(boidIndex==0):
+				separation = scale_by_scalar(separation,0.5)
+				cohesion = scale_by_scalar(cohesion,0.5)
 		
 			separation = scale_by_scalar(separation, sWeight)
 			alignment = scale_by_scalar(alignment, aWeight)
@@ -67,30 +95,39 @@ def simulateKeyframes(boids_array, cRadius, sRadius, aRadius, nFrames, cWeight, 
 			currentVelocity = boid.getVelocity()
 
 			newVelocity = add(currentVelocity, add(cohesion, add(alignment,separation)))
-			
+
 			if(length(newVelocity) > mSpeed):	
 				newVelocity = scale_by_scalar(newVelocity, 0.75)
 
-			# newVelocity = add(currentVelocity, cohesion)
-			boid.setVelocity(newVelocity)
-
-			## new position
-			currentPostion = boid.getPosition()
-			newPosition = add(currentPostion, scale_by_scalar(newVelocity, 1))#0.08
-			boid.setPosition(newPosition)
+			currentPosition = boid.getPosition()
 
 			if(boidIndex == 0):
-				target = cmds.polyCube(width=0.5, height=0.5, depth=0.5,  n='target')
-				cmds.setAttr('%s.translate'%target[0], newPosition[0], newPosition[1], newPosition[2])
-				cmds.aimConstraint(target[0], boid.getObj()[0], aim=[0,-1,0], u=[0,0,1], wu=[1,0,0], wut='vector', o=[0.00001, 0.0, 0.0])
-				# cmds.delete(target[0])
+				#	print dist(currentPosition, goals_array[goal_index])
+				if(dist(currentPosition, goals_array[goal_index]) < 10):
+					goal_index = goal_index + 1
+					if(goal_index > len(goals_array)-1):
+						goal_index = (len(goals_array)-1)
+				goalVector = sub(goals_array[goal_index], currentPosition)
+				goalVector = norm(goalVector)
+				goalVector = scale_by_scalar(goalVector, 0.7)
+				newVelocity = add(newVelocity, goalVector)
+				
 
-			## update keyframe
-			cmds.setKeyframe(boid.getObj(), time=keyframe*TIMESTEP, v=newPosition[0], at='translateX')
-			cmds.setKeyframe(boid.getObj(), time=keyframe*TIMESTEP, v=newPosition[1], at='translateY')
-			cmds.setKeyframe(boid.getObj(), time=keyframe*TIMESTEP, v=newPosition[2], at='translateZ')
-	
+			boid.setVelocity(newVelocity)
 
+			## new position for boid
+			#currentPosition = boid.getPosition()
+			newPosition = add(currentPosition, scale_by_scalar(newVelocity, 1))
+
+			boid.setPosition(newPosition)
+
+			## new position for target
+			targetPosition = add(newPosition, scale_by_scalar(newVelocity, 0.4))
+			boid.setTargetPosition(targetPosition)
+
+			## update keyframe position
+			keyframeTranslate(boid.getObj(), keyframe*TIMESTEP, newPosition)
+			keyframeTranslate(boid.getTarget(), keyframe*TIMESTEP, targetPosition)
 
 def main(nBoids, bScale, nFrames, mSpeed, cWeight, cRadius, sWeight, sRadius, aWeight, aRadius, cBox1, cBox2, cBox3):
 
@@ -100,11 +137,15 @@ def main(nBoids, bScale, nFrames, mSpeed, cWeight, cRadius, sWeight, sRadius, aW
 	## create boids
 	boids_array = createBoids(nBoids)
 
+	## get goals in scene
+	goals_array = getGoals()
+
 	## randomize positions
 	firstKeyframe(boids_array, bScale)
 
 	## simulate keyframes
-	simulateKeyframes(boids_array, cRadius, sRadius, aRadius, nFrames, cWeight, sWeight, aWeight, mSpeed)
+
+	simulateKeyframes(boids_array, cRadius, sRadius, aRadius, nFrames, cWeight, sWeight, aWeight, mSpeed, goals_array)
 
 	cmds.playbackOptions(max=nFrames)
 	cmds.playbackOptions(aet=nFrames)
@@ -113,3 +154,4 @@ def main(nBoids, bScale, nFrames, mSpeed, cWeight, cRadius, sWeight, sRadius, aW
 	cmds.play()
 
 createUI( 'BEZTBOIDZ', applyCallback )
+
