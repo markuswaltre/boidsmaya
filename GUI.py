@@ -13,20 +13,25 @@ def createUI( pWindowTitle, pApplyCallback ):
 
     cmds.columnLayout(adj = True)
 
-    logopath = cmds.internalVar(upd=True)+"icons/logo.jpg"
+    logopath = cmds.internalVar(upd=True)
 
     print 'cWwight: %s' % ( logopath )
 
-    cmds.image(w=350, h=100, image=logopath)
-
+    cmds.image("logo", w=500, h=150, image=logopath+"icons/logo2.jpg")
 
     cmds.separator( h=20, style='none' )
     cmds.text( label='Boids' )
     cmds.separator( h=10, style='none' )
 
-    numberOfBoids = cmds.intSliderGrp( label = "Number of boids:", min=0, max=100, field=True, value=10)
+    def updateLogo( *pArgs ):
+        n = cmds.intSliderGrp( numberOfBoids, query=True, value=True )
+
+    numberOfBoids = cmds.intSliderGrp( label = "Number of boids:", min=0, max=100, field=True, value=10, changeCommand=updateLogo)
     boidSize = cmds.floatSliderGrp( label = "Size of boids:", min=0, max=10, field=True, value=1, step=0.001)
     maxSpeed = cmds.floatSliderGrp( label = "Speed limit:", min=0, max=100, field=True, value=10, step=0.001)
+    checkBoxes = cmds.checkBoxGrp( numberOfCheckBoxes=3, label='', labelArray3=['Show targets', 'Use goals', 'Three'], valueArray3=[True, False, True] )
+
+    cs = cmds.colorSliderGrp( label = "Color:")
 
     cmds.separator( h=20, style='none' )
     cmds.text( label='Animation' )
@@ -64,7 +69,8 @@ def createUI( pWindowTitle, pApplyCallback ):
                                                   cohesionWeight,
                                                   cohesionRadius,
                                                   alignmentWeight,
-                                                  alignmentRadius ) )
+                                                  alignmentRadius,
+                                                  checkBoxes ) )
     
     def cancelCallback( *pArgs ):
         if cmds.window( windowID, exists=True ):
@@ -74,8 +80,12 @@ def createUI( pWindowTitle, pApplyCallback ):
     
     cmds.showWindow()
  
-def applyCallback( pNumberOfBoidsField, pBoidSize, pNFrames, pMaxSpeed, pSeparationWeight, pSeparationRadius, pCohesionWeight, pCohesionRadius, pAlignmentWeight, pAlignmentRadius, *pArgs ):
+def applyCallback( pNumberOfBoidsField, pBoidSize, pNFrames, pMaxSpeed, pSeparationWeight, pSeparationRadius, pCohesionWeight, pCohesionRadius, pAlignmentWeight, pAlignmentRadius, pCheckBoxes, *pArgs ):
  
+    cBox1 = cmds.checkBoxGrp(pCheckBoxes, query=True, value1=True)
+    cBox2 = cmds.checkBoxGrp(pCheckBoxes, query=True, value2=True)
+    cBox3 = cmds.checkBoxGrp(pCheckBoxes, query=True, value3=True)    
+
     nBoids = cmds.intSliderGrp( pNumberOfBoidsField, query=True, value=True )
     bScale = cmds.floatSliderGrp( pBoidSize, query=True, value=True )
 
@@ -92,7 +102,7 @@ def applyCallback( pNumberOfBoidsField, pBoidSize, pNFrames, pMaxSpeed, pSeparat
     aWeight = cmds.floatSliderGrp( pAlignmentWeight, query=True, value=True )
     aRadius= cmds.floatSliderGrp( pAlignmentRadius, query=True, value=True )
 
-    main(nBoids, bScale, nFrames, mSpeed, cWeight, cRadius, sWeight, sRadius, aWeight, aRadius)
+    main(nBoids, bScale, nFrames, mSpeed, cWeight, cRadius, sWeight, sRadius, aWeight, aRadius, cBox1, cBox2, cBox3)
 
 
 
