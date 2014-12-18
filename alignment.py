@@ -5,7 +5,7 @@ def calculateAlignment(currentBoidIndex, boids, NEIGHBOR_DISTANCE):
 	neighbors = []
 	currentBoidPos = boids[currentBoidIndex].getPosition()
 	avgVelocity = [0, 0, 0]
-	WHEIGHT = 0.2
+	WHEIGHT = 1#-0.02
 
 	for index in range(len(boids)):
 		if(index != currentBoidIndex):
