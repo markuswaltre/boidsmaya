@@ -9,7 +9,7 @@ from goals import *
 from GUI import *
 
 ## variables
-TIMESTEP = 20
+TIMESTEP = 20 # this is speed n' stuff
 START_POS = 40
 
 def deleteAllObjects():
@@ -52,30 +52,24 @@ def simulateKeyframes(boids_array, cRadius, sRadius, aRadius, nFrames, cWeight, 
 		for boidIndex in range(len(boids_array)):
 			boid = boids_array[boidIndex]
 
-			## get vectors
+			## get steering rules
 			separation 	= calculateSeparation(boidIndex, boids_array, sRadius)
 			cohesion 	= calculateCohesion(boidIndex, boids_array, cRadius)
 			alignment 	= calculateAlignment(boidIndex, boids_array, aRadius)
-
-			if(boidIndex==0):
-				separation = scale_by_scalar(separation,0.5)
-				cohesion = scale_by_scalar(cohesion,0.5)
 		
 			separation = scale_by_scalar(separation, sWeight)
 			alignment = scale_by_scalar(alignment, aWeight)
 			cohesion = scale_by_scalar(cohesion, cWeight)
 
-			newVelocity = [0,0,0]
-
-			## new velocity
+			## current velocity and position
 			currentVelocity = boid.getVelocity()
-			newVelocity = add(currentVelocity, add(cohesion, add(alignment,separation)))
-
 			currentPosition = boid.getPosition()
 
-			if(boidIndex == 0 and cBoxUseGoals):
+			## new velocity
+			newVelocity = add(currentVelocity, add(cohesion, add(alignment,separation)))
+			if(cBoxUseGoals):
 				goalVelocity = goals.calculateGoal(currentPosition, goals_array)
-				newVelocity = add(newVelocity, scale_by_scalar(goalVelocity, len(boids_array)/4))
+				newVelocity = add(newVelocity, scale_by_scalar(goalVelocity, 4))
 
 			if(length(newVelocity) > mSpeed):	
 				newVelocity = scale_by_scalar(newVelocity, 0.75)
@@ -84,7 +78,6 @@ def simulateKeyframes(boids_array, cRadius, sRadius, aRadius, nFrames, cWeight, 
 
 			## new position for boid
 			newPosition = add(currentPosition, scale_by_scalar(newVelocity, 0.4))
-
 			boid.setPosition(newPosition)
 
 			## new position for target
