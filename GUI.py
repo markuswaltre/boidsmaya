@@ -46,16 +46,16 @@ def createUI( pWindowTitle, pApplyCallback ):
         else:
             cmds.image("logo", w=500, h=150, image=logopath+"logo11.jpg")        
 
-    numberOfBoids = cmds.intSliderGrp( label = "Number of boids:", min=0, max=10000, field=True, value=10, changeCommand=updateLogo)
+    numberOfBoids = cmds.intSliderGrp( label = "Number of boids:", min=0, max=500, field=True, value=77, changeCommand=updateLogo)
     boidSize = cmds.floatSliderGrp( label = "Size of boids:", min=0, max=10, field=True, value=1, step=0.001)
     maxSpeed = cmds.floatSliderGrp( label = "Speed limit:", min=0, max=100, field=True, value=10, step=0.001)
-    checkBoxes = cmds.checkBoxGrp( numberOfCheckBoxes=3, label='', labelArray3=['Show targets', 'Use goals', 'Three'], valueArray3=[True, False, True] )
+    checkBoxes = cmds.checkBoxGrp( numberOfCheckBoxes=3, label='', labelArray3=['Show targets', 'Use goals', 'Three'], valueArray3=[True, False, False] )
 
     cmds.separator( h=20, style='in' )
     cmds.text( label='Animation' )
     cmds.separator( h=10, style='none' )
 
-    numberOfFrames = cmds.intSliderGrp( label = "Number of frames:", min=1, max=10000, field=True, value=500)
+    numberOfFrames = cmds.intSliderGrp( label = "Number of frames:", min=1, max=10000, field=True, value=1500)
 
     cmds.separator( h=20, style='in' )
     cmds.text( label='Rules' )
@@ -66,7 +66,7 @@ def createUI( pWindowTitle, pApplyCallback ):
     cmds.separator( h=5, style='none' )
 
     separationRadius = cmds.floatSliderGrp( label = "Separation radius:", min=0, max=100, field=True, value=10, step=0.001)
-    separationWeight = cmds.floatSliderGrp( label = "Separation weight:", min=0, max=10, field=True, value=0.06, step=0.001)
+    separationWeight = cmds.floatSliderGrp( label = "Separation weight:", min=0, max=10, field=True, value=0.55, step=0.001)
     cmds.separator( h=5, style='none' )
 
     alignmentRadius = cmds.floatSliderGrp( label = "Alignment radius:", min=0, max=100, field=True, value=6, step=0.001)
