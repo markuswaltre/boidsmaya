@@ -14,9 +14,6 @@ goal_array = []
 
 
 def deleteAllObjects():
-	# cmds.select(all=True)
-	# cmds.delete()
-
 	cmds.select('boid*', r=True)
 	cmds.delete()
 
@@ -24,7 +21,7 @@ def deleteAllObjects():
 def getGoals():
 	goals = []
 
-	cmds.select('goal*', r=True)
+	print cmds.select('goal*', r=True)
 	selected = cmds.ls(sl=True)
 	for item in range(len(selected)/2): 
 		x = cmds.getAttr("%s.translateX" % selected[item])
@@ -34,10 +31,6 @@ def getGoals():
 		goals.append(pos)
 
 	return goals
-
-
-	
-	
 
 def createBoids(number):
 	arr = []
@@ -76,7 +69,6 @@ def simulateKeyframes(boids_array, cRadius, sRadius, aRadius, nFrames, cWeight, 
 			boid = boids_array[boidIndex]
 
 			## get vectors
-
 			separation 	= calculateSeparation(boidIndex, boids_array, sRadius)
 			cohesion 	= calculateCohesion(boidIndex, boids_array, cRadius)
 			alignment 	= calculateAlignment(boidIndex, boids_array, aRadius)
@@ -112,11 +104,9 @@ def simulateKeyframes(boids_array, cRadius, sRadius, aRadius, nFrames, cWeight, 
 				goalVector = scale_by_scalar(goalVector, 0.7)
 				newVelocity = add(newVelocity, goalVector)
 				
-
 			boid.setVelocity(newVelocity)
 
 			## new position for boid
-			#currentPosition = boid.getPosition()
 			newPosition = add(currentPosition, scale_by_scalar(newVelocity, 1))
 
 			boid.setPosition(newPosition)
@@ -144,7 +134,6 @@ def main(nBoids, bScale, nFrames, mSpeed, cWeight, cRadius, sWeight, sRadius, aW
 	firstKeyframe(boids_array, bScale)
 
 	## simulate keyframes
-
 	simulateKeyframes(boids_array, cRadius, sRadius, aRadius, nFrames, cWeight, sWeight, aWeight, mSpeed, goals_array)
 
 	cmds.playbackOptions(max=nFrames)
