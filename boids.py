@@ -8,9 +8,6 @@ from alignment import *
 from GUI import *
 
 ## variables
-#OBJECTS = 20
-#NEIGHBOR_DISTANCE = 40
-#KEYFRAMES = 2000
 TIMESTEP = 20
 START_POS = 40
 
@@ -34,15 +31,13 @@ def firstKeyframe(boids_array, bScale):
 		pos.append(random.random() * START_POS - START_POS/2)
 		pos.append(random.random() * START_POS - START_POS/2)
 
-		vel = [0, 0, 0]
-
 		boid.setPosition(pos)
-		boid.setVelocity(vel)
 		boid.setScale(bScale)
 
 		keyframeTranslate(boid.getObj(), 0, pos)
 		keyframeTranslate(boid.getTarget(), 0, pos)
 		boid.setAim()
+		boid.hideTarget()
 
 def keyframeTranslate(obj, t, position):
 	cmds.setKeyframe(obj, time=t, v=position[0], at='translateX')
@@ -77,11 +72,11 @@ def simulateKeyframes(boids_array, cRadius, sRadius, aRadius, nFrames, cWeight, 
 
 			## new position for boid
 			currentPosition = boid.getPosition()
-			newPosition = add(currentPosition, scale_by_scalar(newVelocity, 1))
+			newPosition = add(currentPosition, scale_by_scalar(newVelocity, 0.4))
 			boid.setPosition(newPosition)
 
 			## new position for target
-			targetPosition = add(newPosition, scale_by_scalar(newVelocity, 1))
+			targetPosition = add(newPosition, scale_by_scalar(newVelocity, 0.4))
 			boid.setTargetPosition(targetPosition)
 
 			## update keyframe position
