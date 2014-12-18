@@ -46,7 +46,7 @@ def createUI( pWindowTitle, pApplyCallback ):
         else:
             cmds.image("logo", w=500, h=150, image=logopath+"logo11.jpg")        
 
-    numberOfBoids = cmds.intSliderGrp( label = "Number of boids:", min=0, max=100, field=True, value=10, changeCommand=updateLogo)
+    numberOfBoids = cmds.intSliderGrp( label = "Number of boids:", min=0, max=10000, field=True, value=10, changeCommand=updateLogo)
     boidSize = cmds.floatSliderGrp( label = "Size of boids:", min=0, max=10, field=True, value=1, step=0.001)
     maxSpeed = cmds.floatSliderGrp( label = "Speed limit:", min=0, max=100, field=True, value=10, step=0.001)
     checkBoxes = cmds.checkBoxGrp( numberOfCheckBoxes=3, label='', labelArray3=['Show targets', 'Use goals', 'Three'], valueArray3=[True, False, True] )
