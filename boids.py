@@ -92,7 +92,7 @@ def simulateKeyframes(boids_array, cRadius, sRadius, aRadius, nFrames, cWeight, 
 	
 
 
-def main(nBoids, bScale, nFrames, mSpeed, cWeight, cRadius, sWeight, sRadius, aWeight, aRadius):
+def main(nBoids, bScale, nFrames, mSpeed, cWeight, cRadius, sWeight, sRadius, aWeight, aRadius, cBox1, cBox2, cBox3):
 
 	## delete scene
 	deleteAllObjects()
