@@ -11,6 +11,7 @@ from GUI import *
 ## variables
 TIMESTEP = 20 # this is speed n' stuff
 START_POS = 40
+START_VEL = 15
 
 def deleteAllObjects():
 	if len(cmds.ls('boid*', r=True)) > 0:
@@ -25,7 +26,7 @@ def createBoids(number):
 
 	return arr
 
-def firstKeyframe(boids_array, bScale, cBoxShowTarget):
+def firstKeyframe(boids_array, bScale, cBoxShowTarget, cBoxRandomVel):
 	for boid in boids_array:
 
 		pos = []
@@ -35,6 +36,13 @@ def firstKeyframe(boids_array, bScale, cBoxShowTarget):
 
 		boid.setPosition(pos)
 		boid.setScale(bScale)
+
+		if cBoxRandomVel:
+			vel = []
+			vel.append(random.random() * START_VEL - START_VEL/2)
+			vel.append(random.random() * START_VEL - START_VEL/2)
+			vel.append(random.random() * START_VEL - START_VEL/2)	
+			boid.setVelocity(vel)
 
 		keyframeTranslate(boid.getObj(), 0, pos)
 		keyframeTranslate(boid.getTarget(), 0, pos)
@@ -88,7 +96,7 @@ def simulateKeyframes(boids_array, cRadius, sRadius, aRadius, nFrames, cWeight, 
 			keyframeTranslate(boid.getObj(), keyframe*TIMESTEP, newPosition)
 			keyframeTranslate(boid.getTarget(), keyframe*TIMESTEP, targetPosition)
 
-def main(nBoids, bScale, nFrames, mSpeed, cWeight, cRadius, sWeight, sRadius, aWeight, aRadius, cBoxShowTarget, cBoxUseGoals, cBox3):
+def main(nBoids, bScale, nFrames, mSpeed, cWeight, cRadius, sWeight, sRadius, aWeight, aRadius, cBoxShowTarget, cBoxUseGoals, cBoxRandomVel):
 	## set keyframe 0
 	cmds.currentTime( 0 )
 
@@ -107,7 +115,7 @@ def main(nBoids, bScale, nFrames, mSpeed, cWeight, cRadius, sWeight, sRadius, aW
 		goals_array = goals.getGoals()
 
 	## randomize positions
-	firstKeyframe(boids_array, bScale, cBoxShowTarget)
+	firstKeyframe(boids_array, bScale, cBoxShowTarget, cBoxRandomVel)
 
 	## simulate keyframes
 	simulateKeyframes(boids_array, cRadius, sRadius, aRadius, nFrames, cWeight, sWeight, aWeight, mSpeed, goals_array, cBoxUseGoals, goals)

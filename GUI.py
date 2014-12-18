@@ -49,7 +49,7 @@ def createUI( pWindowTitle, pApplyCallback ):
     numberOfBoids = cmds.intSliderGrp( label = "Number of boids:", min=0, max=500, field=True, value=77, changeCommand=updateLogo)
     boidSize = cmds.floatSliderGrp( label = "Size of boids:", min=0, max=10, field=True, value=1, step=0.001)
     maxSpeed = cmds.floatSliderGrp( label = "Speed limit:", min=0, max=100, field=True, value=10, step=0.001)
-    checkBoxes = cmds.checkBoxGrp( numberOfCheckBoxes=3, label='', labelArray3=['Show targets', 'Use goals', 'Three'], valueArray3=[True, False, False] )
+    checkBoxes = cmds.checkBoxGrp( numberOfCheckBoxes=3, label='', labelArray3=['Show targets', 'Use goals', 'Random start velocity'], valueArray3=[True, False, False] )
 
     cmds.separator( h=20, style='in' )
     cmds.text( label='Animation' )
