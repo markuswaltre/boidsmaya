@@ -75,7 +75,7 @@ def simulateKeyframes(boids_array, cRadius, sRadius, aRadius, nFrames, cWeight, 
 
 			if(boidIndex == 0 and cBoxUseGoals):
 				goalVelocity = goals.calculateGoal(currentPosition, goals_array)
-				newVelocity = add(newVelocity, scale_by_scalar(goalVelocity, len(boids_array)))
+				newVelocity = add(newVelocity, scale_by_scalar(goalVelocity, len(boids_array)/4))
 
 			if(length(newVelocity) > mSpeed):	
 				newVelocity = scale_by_scalar(newVelocity, 0.75)
@@ -96,6 +96,9 @@ def simulateKeyframes(boids_array, cRadius, sRadius, aRadius, nFrames, cWeight, 
 			keyframeTranslate(boid.getTarget(), keyframe*TIMESTEP, targetPosition)
 
 def main(nBoids, bScale, nFrames, mSpeed, cWeight, cRadius, sWeight, sRadius, aWeight, aRadius, cBoxShowTarget, cBoxUseGoals, cBox3):
+	## set keyframe 0
+	cmds.currentTime( 0 )
+
 	## delete scene
 	deleteAllObjects()
 
