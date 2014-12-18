@@ -62,15 +62,15 @@ def createUI( pWindowTitle, pApplyCallback ):
     cmds.separator( h=10, style='none' )
 
     cohesionRadius = cmds.floatSliderGrp( label = "Cohesion radius:", min=0, max=100, field=True, value=20, step=0.001)
-    cohesionWeight = cmds.floatSliderGrp( label = "Cohesion weight:", min=0, max=10, field=True, value=1, step=0.001)
+    cohesionWeight = cmds.floatSliderGrp( label = "Cohesion weight:", min=0, max=10, field=True, value=0.75, step=0.001)
     cmds.separator( h=5, style='none' )
 
     separationRadius = cmds.floatSliderGrp( label = "Separation radius:", min=0, max=100, field=True, value=10, step=0.001)
-    separationWeight = cmds.floatSliderGrp( label = "Separation weight:", min=0, max=10, field=True, value=1, step=0.001)
+    separationWeight = cmds.floatSliderGrp( label = "Separation weight:", min=0, max=10, field=True, value=0.06, step=0.001)
     cmds.separator( h=5, style='none' )
 
     alignmentRadius = cmds.floatSliderGrp( label = "Alignment radius:", min=0, max=100, field=True, value=6, step=0.001)
-    alignmentWeight = cmds.floatSliderGrp( label = "Alignment weight:", min=0, max=10, field=True, value=1, step=0.001)
+    alignmentWeight = cmds.floatSliderGrp( label = "Alignment weight:", min=0, max=10, field=True, value=0.02, step=0.001)
 
 
     cmds.separator( h=15, style='in' )
