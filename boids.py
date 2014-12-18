@@ -5,36 +5,17 @@ from vec import *
 from separation import *
 from cohesion import *
 from alignment import *
+from goals import *
 from GUI import *
 
 ## variables
 TIMESTEP = 20
 START_POS = 40
-goal_array = []
-
 
 def deleteAllObjects():
-	cmds.select(all=True)
-	cmds.delete()
-
-	cmds.select('boid*', r=True)
-	cmds.delete()
-
-
-def getGoals():
-	goals = []
-
-	cmds.select('goal*', r=True)
-	selected = cmds.ls(sl=True)
-	for item in range(len(selected)/2): 
-		x = cmds.getAttr("%s.translateX" % selected[item])
-		y = cmds.getAttr("%s.translateY" % selected[item])
-		z = cmds.getAttr("%s.translateZ" % selected[item])
-		pos = [x,y,z]
-		goals.append(pos)
-
-	return goals
-
+	if len(cmds.ls('boid*', r=True)) > 0:
+		cmds.select('boid*', r=True)
+		cmds.delete()		
 
 def createBoids(number):
 	arr = []
@@ -43,7 +24,6 @@ def createBoids(number):
 		arr.append(make_boid(index))
 
 	return arr
-
 
 def firstKeyframe(boids_array, bScale, cBoxShowTarget):
 	for boid in boids_array:
@@ -67,14 +47,12 @@ def keyframeTranslate(obj, t, position):
 	cmds.setKeyframe(obj, time=t, v=position[1], at='translateY')
 	cmds.setKeyframe(obj, time=t, v=position[2], at='translateZ')
 
-def simulateKeyframes(boids_array, cRadius, sRadius, aRadius, nFrames, cWeight, sWeight, aWeight, mSpeed, goals_array):
-	goal_index = 0
+def simulateKeyframes(boids_array, cRadius, sRadius, aRadius, nFrames, cWeight, sWeight, aWeight, mSpeed, goals_array, cBoxUseGoals, goals):
 	for keyframe in range(nFrames/TIMESTEP):
 		for boidIndex in range(len(boids_array)):
 			boid = boids_array[boidIndex]
 
 			## get vectors
-
 			separation 	= calculateSeparation(boidIndex, boids_array, sRadius)
 			cohesion 	= calculateCohesion(boidIndex, boids_array, cRadius)
 			alignment 	= calculateAlignment(boidIndex, boids_array, aRadius)
@@ -91,31 +69,21 @@ def simulateKeyframes(boids_array, cRadius, sRadius, aRadius, nFrames, cWeight, 
 
 			## new velocity
 			currentVelocity = boid.getVelocity()
-
 			newVelocity = add(currentVelocity, add(cohesion, add(alignment,separation)))
+
+			currentPosition = boid.getPosition()
+
+			if(boidIndex == 0 and cBoxUseGoals):
+				goalVelocity = goals.calculateGoal(currentPosition, goals_array)
+				newVelocity = add(newVelocity, scale_by_scalar(goalVelocity, len(boids_array)/4))
 
 			if(length(newVelocity) > mSpeed):	
 				newVelocity = scale_by_scalar(newVelocity, 0.75)
 
-			currentPosition = boid.getPosition()
-
-			if(boidIndex == 0):
-				#	print dist(currentPosition, goals_array[goal_index])
-				if(dist(currentPosition, goals_array[goal_index]) < 10):
-					goal_index = goal_index + 1
-					if(goal_index > len(goals_array)-1):
-						goal_index = (len(goals_array)-1)
-				goalVector = sub(goals_array[goal_index], currentPosition)
-				goalVector = norm(goalVector)
-				goalVector = scale_by_scalar(goalVector, 0.7)
-				newVelocity = add(newVelocity, goalVector)
-				
-
 			boid.setVelocity(newVelocity)
 
 			## new position for boid
-			#currentPosition = boid.getPosition()
-			newPosition = add(currentPosition, scale_by_scalar(newVelocity, 1))
+			newPosition = add(currentPosition, scale_by_scalar(newVelocity, 0.4))
 
 			boid.setPosition(newPosition)
 
@@ -128,6 +96,8 @@ def simulateKeyframes(boids_array, cRadius, sRadius, aRadius, nFrames, cWeight, 
 			keyframeTranslate(boid.getTarget(), keyframe*TIMESTEP, targetPosition)
 
 def main(nBoids, bScale, nFrames, mSpeed, cWeight, cRadius, sWeight, sRadius, aWeight, aRadius, cBoxShowTarget, cBoxUseGoals, cBox3):
+	## set keyframe 0
+	cmds.currentTime( 0 )
 
 	## delete scene
 	deleteAllObjects()
@@ -135,15 +105,19 @@ def main(nBoids, bScale, nFrames, mSpeed, cWeight, cRadius, sWeight, sRadius, aW
 	## create boids
 	boids_array = createBoids(nBoids)
 
+	## create goal object
+	goals = Goals()
+
 	## get goals in scene
-	goals_array = getGoals()
+	goals_array = []
+	if cBoxUseGoals:
+		goals_array = goals.getGoals()
 
 	## randomize positions
 	firstKeyframe(boids_array, bScale, cBoxShowTarget)
 
 	## simulate keyframes
-
-	simulateKeyframes(boids_array, cRadius, sRadius, aRadius, nFrames, cWeight, sWeight, aWeight, mSpeed, goals_array)
+	simulateKeyframes(boids_array, cRadius, sRadius, aRadius, nFrames, cWeight, sWeight, aWeight, mSpeed, goals_array, cBoxUseGoals, goals)
 
 	cmds.playbackOptions(max=nFrames)
 	cmds.playbackOptions(aet=nFrames)

@@ -14,7 +14,7 @@ class Boid(object):
 
 		# self._obj = cmds.polyCone(constructionHistory=True, radius=2, height=5, n=self._name)
 		self._obj = cmds.polyCube(constructionHistory=True, width=2, height=2, n=self._name)
-		self._target = cmds.polyCube(width=0.5, height=0.5, depth=0.5,  n="target%s" % self._name)
+		self._target = cmds.polyCube(width=0.5, height=0.5, depth=0.5,  n="%starget" % self._name)
 
 	def getPosition(self):
 		return self._position
@@ -55,3 +55,4 @@ class Boid(object):
 
 def make_boid(order):
 	return Boid(order)
+	
