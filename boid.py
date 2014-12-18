@@ -7,7 +7,7 @@ class Boid(object):
 	_obj = ""
 
 	def __init__(self, order):
-		self._name = "cube%s" % order
+		self._name = "boid%s" % order
 		self._obj = cmds.polyCone(constructionHistory=True, radius=2, height=5, n=self._name)
 
 	def getPosition(self):
