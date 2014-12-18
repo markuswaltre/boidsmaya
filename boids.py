@@ -14,8 +14,8 @@ goal_array = []
 
 
 def deleteAllObjects():
-	# cmds.select(all=True)
-	# cmds.delete()
+	cmds.select(all=True)
+	cmds.delete()
 
 	cmds.select('boid*', r=True)
 	cmds.delete()
@@ -48,7 +48,7 @@ def createBoids(number):
 	return arr
 
 
-def firstKeyframe(boids_array, bScale):
+def firstKeyframe(boids_array, bScale, cBoxShowTarget):
 	for boid in boids_array:
 
 		pos = []
@@ -62,7 +62,8 @@ def firstKeyframe(boids_array, bScale):
 		keyframeTranslate(boid.getObj(), 0, pos)
 		keyframeTranslate(boid.getTarget(), 0, pos)
 		boid.setAim()
-		boid.hideTarget()
+		if not cBoxShowTarget:
+			boid.hideTarget()
 
 def keyframeTranslate(obj, t, position):
 	cmds.setKeyframe(obj, time=t, v=position[0], at='translateX')
@@ -129,7 +130,7 @@ def simulateKeyframes(boids_array, cRadius, sRadius, aRadius, nFrames, cWeight, 
 			keyframeTranslate(boid.getObj(), keyframe*TIMESTEP, newPosition)
 			keyframeTranslate(boid.getTarget(), keyframe*TIMESTEP, targetPosition)
 
-def main(nBoids, bScale, nFrames, mSpeed, cWeight, cRadius, sWeight, sRadius, aWeight, aRadius, cBox1, cBox2, cBox3):
+def main(nBoids, bScale, nFrames, mSpeed, cWeight, cRadius, sWeight, sRadius, aWeight, aRadius, cBoxShowTarget, cBoxUseGoals, cBox3):
 
 	## delete scene
 	deleteAllObjects()
@@ -141,7 +142,7 @@ def main(nBoids, bScale, nFrames, mSpeed, cWeight, cRadius, sWeight, sRadius, aW
 	goals_array = getGoals()
 
 	## randomize positions
-	firstKeyframe(boids_array, bScale)
+	firstKeyframe(boids_array, bScale, cBoxShowTarget)
 
 	## simulate keyframes
 
