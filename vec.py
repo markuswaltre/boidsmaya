@@ -35,3 +35,9 @@ def setlength(u, l):
 
 def norm(u):
 	return setlength(u, 1)
+
+def dotproduct(u, v):
+  return sum((a*b) for a, b in zip(u, v))
+
+def angle(u, v):
+  return math.acos(dotproduct(u, v) / (length(u) * length(v)))

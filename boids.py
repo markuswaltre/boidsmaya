@@ -12,6 +12,7 @@ OBJECTS = 20
 NEIGHBOR_DISTANCE = 40
 KEYFRAMES = 2000
 TIMESTEP = 20
+START_POS = 40
 
 def deleteAllObjects():
 	cmds.select( all=True )
@@ -27,23 +28,25 @@ def createBoids(number):
 
 def firstKeyframe(boids_array):
 	for boid in boids_array:
-		xPos = random.random() * 20 - 10
-		yPos = random.random() * 20 - 10
-		zPos = random.random() * 20 - 10
 
-		xVel = 0 #random.random() - 1
-		yVel = 0 #random.random() - 1
-		zVel = 0 #random.random() - 1
-		# xVel = 0
-		# yVel = 0
-		# zVel = 0
+		pos = []
+		pos.append(random.random() * START_POS - START_POS/2)
+		pos.append(random.random() * START_POS - START_POS/2)
+		pos.append(random.random() * START_POS - START_POS/2)
 
-		boid.setPosition([xPos, yPos, zPos])
-		boid.setVelocity([xVel, yVel, zVel])
+		vel = [0, 0, 0]
 
-		cmds.setKeyframe(boid.getObj(), time=0, v=xPos, at='translateX')
-		cmds.setKeyframe(boid.getObj(), time=0, v=yPos, at='translateY')
-		cmds.setKeyframe(boid.getObj(), time=0, v=zPos, at='translateZ')
+		boid.setPosition(pos)
+		boid.setVelocity(vel)
+
+		keyframeTranslate(boid.getObj(), 0, pos)
+		keyframeTranslate(boid.getTarget(), 0, pos)
+		boid.setAim()
+
+def keyframeTranslate(obj, t, position):
+	cmds.setKeyframe(obj, time=t, v=position[0], at='translateX')
+	cmds.setKeyframe(obj, time=t, v=position[1], at='translateY')
+	cmds.setKeyframe(obj, time=t, v=position[2], at='translateZ')
 
 def simulateKeyframes(boids_array):
 
@@ -64,26 +67,20 @@ def simulateKeyframes(boids_array):
 			currentVelocity = boid.getVelocity()
 			newVelocity = add(currentVelocity, add(cohesion, add(alignment,separation)))
 			
-			# newVelocity = add(currentVelocity, cohesion)
 			boid.setVelocity(newVelocity)
 
-			## new position
-			currentPostion = boid.getPosition()
-			newPosition = add(currentPostion, scale_by_scalar(newVelocity, 0.4))
+			## new position for boid
+			currentPosition = boid.getPosition()
+			newPosition = add(currentPosition, scale_by_scalar(newVelocity, 0.4))
 			boid.setPosition(newPosition)
 
-			if(boidIndex == 0):
-				target = cmds.polyCube(width=0.5, height=0.5, depth=0.5,  n='target')
-				cmds.setAttr('%s.translate'%target[0], newPosition[0], newPosition[1], newPosition[2])
-				cmds.aimConstraint(target[0], boid.getObj()[0], aim=[0,-1,0], u=[0,0,1], wu=[1,0,0], wut='vector', o=[0.00001, 0.0, 0.0])
-				# cmds.delete(target[0])
+			## new position for target
+			targetPosition = add(newPosition, scale_by_scalar(newVelocity, 0.4))
+			boid.setTargetPosition(targetPosition)
 
-			## update keyframe
-			cmds.setKeyframe(boid.getObj(), time=keyframe*TIMESTEP, v=newPosition[0], at='translateX')
-			cmds.setKeyframe(boid.getObj(), time=keyframe*TIMESTEP, v=newPosition[1], at='translateY')
-			cmds.setKeyframe(boid.getObj(), time=keyframe*TIMESTEP, v=newPosition[2], at='translateZ')
-	
-
+			## update keyframe position
+			keyframeTranslate(boid.getObj(), keyframe*TIMESTEP, newPosition)
+			keyframeTranslate(boid.getTarget(), keyframe*TIMESTEP, targetPosition)
 
 def main(number):
 
@@ -103,3 +100,4 @@ def main(number):
 	cmds.play()
 
 createUI( 'BEZTBOIDZ', applyCallback )
+

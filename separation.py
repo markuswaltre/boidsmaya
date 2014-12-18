@@ -17,12 +17,8 @@ def calculateSeparation(currentBoidIndex, boids, NEIGHBOR_DISTANCE):
 	if(numberOfNeighbors > 0):
 		for neighborPos in neighbors:
 			temp = sub(currentBoidPos, neighborPos)
-			# temp = scale_by_scalar(temp, -1)
 			separationVector = add(separationVector, temp)
-			# separationVector = scale_by_scalar(separationVector, -1)
-			# separationVector = add(separationVector, temp)
 
-		# separationVector = div_by_scalar(separationVector, numberOfNeighbors)
 		separationVector = scale_by_scalar(separationVector, WHEIGHT)
 
 	return separationVector
