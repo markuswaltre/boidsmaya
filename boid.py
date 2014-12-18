@@ -41,6 +41,9 @@ class Boid(object):
 	def getTarget(self):
 		return self._target
 
+	def hideTarget(self):
+		cmds.hide( self._target )
+
 	def getName(self):
 		return self._name
 
